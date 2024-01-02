@@ -15,14 +15,40 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
   set(CMAKE_CXX_EXTENSIONS ON)
 endif()
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR}/install)
+include(FetchContent)
+set(FETCHCONTENT_BASE_DIR ${CMAKE_BINARY_DIR}/external)
+FetchContent_Declare(
+    glm
+    GIT_REPOSITORY https://gitee.com/mirrors/glm.git
+)
+FetchContent_GetProperties(glm)
+if(NOT glm_POPULATED)
+    FetchContent_Populate(glm)
+    add_subdirectory(${glm_SOURCE_DIR} ${glm_BINARY_DIR})
+endif()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
+#FetchContent_Declare(
+#    spdlog
+#    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+#)
+#FetchContent_GetProperties(spdlog)
+#if(NOT spdlog_POPULATED)
+#    FetchContent_Populate(spdlog)
+#    add_subdirectory(${spdlog_SOURCE_DIR} ${spdlog_BINARY_DIR})
+#endif()
+add_library(glfw STATIC IMPORTED)
+set_property(TARGET glfw PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external/glfw/lib-vc2022/glfw3.lib)
+target_include_directories(glfw INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/glfw/include)
+
+add_library(glew STATIC IMPORTED)
+set_property(TARGET glew PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external/glew/lib/Release/x64/glew32.lib)
+target_include_directories(glew INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/glew/include)
+
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR}/install)
 
 project ("KyBao")
 
+add_subdirectory("external/spdlog")
 # 包含子项目。
 add_subdirectory ("KyBao")
 add_subdirectory ("SandBox")
