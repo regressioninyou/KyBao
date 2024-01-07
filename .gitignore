@@ -12,4 +12,7 @@ _deps
 .vs
 build
 out
+bin
 SandBox.dir
+external
+Dependencis
