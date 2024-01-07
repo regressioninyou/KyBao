@@ -3,6 +3,7 @@
 #
 cmake_minimum_required (VERSION 3.12)
 
+project ("KyBaoProject")
 # 如果支持，请为 MSVC 编译器启用热重载。
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
@@ -10,7 +11,7 @@ if (POLICY CMP0141)
 endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS ON)
 endif()
@@ -27,6 +28,14 @@ if(NOT glm_POPULATED)
     add_subdirectory(${glm_SOURCE_DIR} ${glm_BINARY_DIR})
 endif()
 
+FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://gitee.com/hanzhongyi/glfw.git
+)
+FetchContent_GetProperties(glfw)
+if(NOT glfw_POPULATED)
+    FetchContent_Populate(glfw)
+endif()
 #FetchContent_Declare(
 #    spdlog
 #    GIT_REPOSITORY https://github.com/gabime/spdlog.git
@@ -36,19 +45,37 @@ endif()
 #    FetchContent_Populate(spdlog)
 #    add_subdirectory(${spdlog_SOURCE_DIR} ${spdlog_BINARY_DIR})
 #endif()
-add_library(glfw STATIC IMPORTED)
-set_property(TARGET glfw PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external/glfw/lib-vc2022/glfw3.lib)
-target_include_directories(glfw INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/glfw/include)
+add_definitions(-DGLFW_INCLUDE_NONL)
 
-add_library(glew STATIC IMPORTED)
-set_property(TARGET glew PROPERTY IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/external/glew/lib/Release/x64/glew32.lib)
-target_include_directories(glew INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/external/glew/include)
+list(APPEND INCLUDE_DIR ${GLAD_DIR}/include)
+set(GLFW_DIR ${CMAKE_CURRENT_LIST_DIR}/external/glfw) # Set this to point to an up-to-date GLFW repo
+option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" OFF)
+option(GLFW_BUILD_TESTS "Build the GLFW test programs" OFF)
+option(GLFW_BUILD_DOCS "Build the GLFW documentation" OFF)
+option(GLFW_INSTALL "Generate installation target" OFF)
+option(GLFW_DOCUMENT_INTERNALS "Include internals in documentation" OFF)
+add_subdirectory(${GLFW_DIR} glfw_binary EXCLUDE_FROM_ALL)
+list(APPEND INCLUDE_DIR ${GLFW_DIR}/include)
+list(APPEND INCLUDE_DIR ${GLFW_DIR}/deps)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR}/install)
-
-project ("KyBao")
-
+set(IMGUI_DIR ${CMAKE_CURRENT_LIST_DIR}/Dependencis/imgui)
+list(APPEND INCLUDE_DIR_IMGUI ${IMGUI_DIR} ${IMGUI_DIR}/backends)
+list(
+    APPEND 
+    IMGUI_SOURCE 
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+)
+# 添加 glad 源代码路径
+#add_subdirectory("Dependencis/imgui")
+add_subdirectory("external/glad")
 add_subdirectory("external/spdlog")
 # 包含子项目。
 add_subdirectory ("KyBao")
+add_subdirectory ("KyBao-Editor")
 add_subdirectory ("SandBox")

@@ -11,10 +11,11 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <glm/glm.hpp>
 
 
-#include "KyBao/Core.h"
-#include "KyBao/Log.h"
-#ifdef PLATFORM_WINDOWS
+#include "KyBao/Core/Core.h"
+#include "KyBao/Core/Log.h"
+#ifdef PLATFORM_WINDOWS_S
 #include <Windows.h>
 #endif // PLATFORM_WINDOWS
