@@ -1,8 +1,8 @@
 
 add_executable(
     Editor 
-    "KyBaoEditor.cpp"
-    "EditorLayout.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/KyBaoEditor.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/EditorLayout.cpp"
 )
 target_compile_definitions(Editor
 PRIVATE
@@ -10,11 +10,11 @@ PRIVATE
 )
 target_sources(
     Editor PUBLIC
-        "EditorLayout.h"
+        "${CMAKE_CURRENT_LIST_DIR}/EditorLayout.h"
 )
 #target_sources(Editor 
 #PUBLIC
-# "Editor2D.h"
+# "Editor2D.h" 
 #)
 target_link_libraries(Editor
 PRIVATE 

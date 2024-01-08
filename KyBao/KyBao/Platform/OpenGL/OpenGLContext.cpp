@@ -24,6 +24,7 @@ namespace KyBao {
 		KyBao_CORE_INFO(s1.str());
 		s2 << "OpenGL Renderer : " << glGetString(GL_RENDERER);
 		KyBao_CORE_INFO(s2.str());
+		glEnable(GL_DEPTH_TEST);
 	}
 	void OpenGLContext::SwapBuffers()
 	{

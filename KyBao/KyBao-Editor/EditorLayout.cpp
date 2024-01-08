@@ -1,55 +1,10 @@
 #include <KyBao.h>
 #include "EditorLayout.h"
+#include <glm/gtc/type_ptr.hpp>
 namespace KyBao {
 	EditorLayout::EditorLayout()
 		:Layer("Editor"), m_CameraController(1280.0f / 720.0f), m_ViewportSize(1280.0f, 720.0f)
 	{
-		m_ShaderLibrary = KyBao::CreateRef<KyBao::ShaderLibrary>();
-		std::vector<float> vertices = {
-			-0.5f,  0.5f, 0.0f, 0.0f,1.0f,
-			-0.5f, -0.5f, 0.0f, 0.0f,0.0f,
-			 0.5f,  0.5f, 0.0f, 1.0f,1.0f,
-			 0.5f, -0.5f, 0.0f, 1.0f,0.0f,
-		};
-		std::vector<unsigned int>  indices = {
-			0, 1, 2, 2, 1, 3
-		};
-		m_SquareVA.reset(KyBao::VertexArray::Create());
-		KyBao::Ref<KyBao::VertexBuffer> squareVB;
-		squareVB.reset(KyBao::VertexBuffer::Create(&vertices.at(0), sizeof(float) * vertices.size()));
-		{
-			KyBao::BufferLayout layout = {
-			{KyBao::ShaderDataType::Float3,"aPosition"},
-			{KyBao::ShaderDataType::Float2,"aTexcoord"},
-			};
-			squareVB->SetLayout(layout);
-		}
-		KyBao::Ref<KyBao::IndexBuffer> squareIB;
-		squareIB.reset(KyBao::IndexBuffer::Create(&indices.at(0), indices.size()));
-		m_SquareVA->AddVertexBuffer(squareVB);
-		m_SquareVA->SetIndexBuffer(squareIB);
-		std::string TvsSrc = R"(
-#version 330 core
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec2 aTexcoord;
-
-uniform mat4 uViewProjection;
-out vec2 vTexcoord;
-void main (){
-	vTexcoord = aTexcoord;
-	gl_Position =   uViewProjection * vec4( aPosition,1.0f); 
-}
-		)";
-		std::string TfsSrc = R"(
-#version 330 core
-layout(location = 0) out vec4 color;
-uniform sampler2D uTexture;
-in vec2 vTexcoord;
-void main(){
-color = texture(uTexture,vTexcoord);
-}
-)";
-		m_ShaderLibrary->Add("Blue", KyBao::Shader::Create(TvsSrc, TfsSrc));
 	}
 
 	void EditorLayout::OnAttach()
@@ -67,20 +22,24 @@ color = texture(uTexture,vTexcoord);
 
 	void EditorLayout::OnUpdate(Timestep ts)
 	{
+		if (FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && // zero sized framebuffer is invalid
+			(spec.Width != m_ViewportSize.x || spec.Height != m_ViewportSize.y))
+		{
+			m_Framebuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
+		}
 		if (m_ViewportFocus)
 			m_CameraController.OnUpdate(ts);
+
+		KyBao::Renderer2D::ResetStats();
 		m_Framebuffer->Bind();
-		KyBao::RenderCommand::SetClearColor({ 0.1, 0.1, 0.2, 1 });
+		KyBao::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		KyBao::RenderCommand::Clear();
-
-		KyBao::Renderer::BeginScene(m_CameraController.GetCamera());
-		//KyBao::Renderer::Submit(m_VertexArray, m_Shader);
-		m_ShaderLibrary->Get("Blue")->Bind();
-		m_Texture2D->Bind();
-		m_ShaderLibrary->Get("Blue")->SetInt("uTexture", 0);
-		KyBao::Renderer::Submit(m_SquareVA, m_ShaderLibrary->Get("Blue"));
-		KyBao::Renderer::EndScene();
-
+		
+		KyBao::Renderer2D::BeginScene(m_CameraController.GetCamera());
+		m_ActiveScene->OnUpdate(ts);
+		KyBao::Renderer2D::EndScene();
 		m_Framebuffer->Unbind();
 	}
 
@@ -150,9 +109,7 @@ color = texture(uTexture,vTexcoord);
 			ImGui::EndMenuBar();
 		}
 		ImGui::Begin("Setting");
-		ImGui::Text("Setting");
-		float color[4] = { 1.0f, 1.0f, 1.0f,1.0f };
-		ImGui::ColorEdit4("color", color);
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Render");
@@ -160,14 +117,10 @@ color = texture(uTexture,vTexcoord);
 		m_ViewportHovers = ImGui::IsWindowHovered();
 		Application::Get().GetImGuiLayer()->SetBlockFocosEvents(!m_ViewportFocus || !m_ViewportHovers);
 		uint32_t renderID = m_Framebuffer->GetColorAttachmentRendererID();
-		ImVec2 avail = ImGui::GetContentRegionAvail();
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+
+		m_ViewportSize = { viewportPanelSize.x,viewportPanelSize.y };
 		ImGui::Image((void*)renderID, ImVec2(m_ViewportSize.x, m_ViewportSize.y), ImVec2{ 0,1 }, ImVec2{ 1,0 });
-		if (m_ViewportSize != *((glm::vec2*)&avail) && avail.x > 0 && avail.y > 0)
-		{
-			m_Framebuffer->Resize((uint32_t)avail.x, (uint32_t)avail.y);
-			m_ViewportSize = { avail.x,avail.y };
-			m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-		}
 		ImGui::End();
 		ImGui::PopStyleVar();
 		ImGui::End();

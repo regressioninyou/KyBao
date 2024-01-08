@@ -11,7 +11,7 @@ if (POLICY CMP0141)
 endif()
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set(CMAKE_CXX_STANDARD 20)
+  set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS ON)
 endif()
@@ -28,6 +28,16 @@ if(NOT glm_POPULATED)
     add_subdirectory(${glm_SOURCE_DIR} ${glm_BINARY_DIR})
 endif()
 
+#FetchContent_Declare(
+#    entt
+#    GIT_REPOSITORY https://github.com/skypjack/entt.git
+#)
+#FetchContent_GetProperties(entt)
+#if(NOT entt_POPULATED)
+#    FetchContent_Populate(entt)
+#    add_subdirectory(${entt_SOURCE_DIR} ${entt_BINARY_DIR})
+#endif()
+
 FetchContent_Declare(
     glfw
     GIT_REPOSITORY https://gitee.com/hanzhongyi/glfw.git
@@ -35,7 +45,8 @@ FetchContent_Declare(
 FetchContent_GetProperties(glfw)
 if(NOT glfw_POPULATED)
     FetchContent_Populate(glfw)
-endif()
+endif() 
+
 #FetchContent_Declare(
 #    spdlog
 #    GIT_REPOSITORY https://github.com/gabime/spdlog.git

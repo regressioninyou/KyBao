@@ -19,10 +19,10 @@ namespace KyBao {
 	{
 		glViewport(x,y,width,height);
 	}
-	void OpenGLRendererAPI::DrawIndex(const std::shared_ptr<VertexArray>& vertexArray)
+	void OpenGLRendererAPI::DrawIndex(const std::shared_ptr<VertexArray>& vertexArray, uint32_t count)
 	{
-		glDrawElements(GL_TRIANGLES,
-			vertexArray->GetIndexBuffer()->GetCount(),
-			GL_UNSIGNED_INT,nullptr);
+		vertexArray->Bind();
+		uint32_t indexCount = count ? count : vertexArray->GetIndexBuffer()->GetCount();
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT,nullptr);
 	}
 }

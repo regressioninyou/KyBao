@@ -4,11 +4,13 @@ namespace KyBao {
 	class OpenGLVertexBuffer : public VertexBuffer
 	{
 	public:
+		OpenGLVertexBuffer(uint32_t size);
 		OpenGLVertexBuffer(float* vertices, uint32_t size);
 		~OpenGLVertexBuffer();
 
 		virtual void Bind()const ;
 		virtual void UnBind()const;
+		virtual void SetData(const void* data, uint32_t size);
 		virtual void SetLayout(const BufferLayout& layout) override { m_Layout = layout; };
 		virtual BufferLayout& GetLayout()override { return m_Layout; };
 	private:
