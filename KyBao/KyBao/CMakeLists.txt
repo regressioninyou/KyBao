@@ -21,14 +21,14 @@ add_library(KyBao
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Core/Layer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Core/LayerStack.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Core/Log.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Core/Application.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Core/Application.cpp" 
 
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/ImGui/ImGuiLayer.cpp"
 
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Shader.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Buffer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Renderer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Render2D.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Renderer2D.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/RendererAPI.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/VertexArray.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/RendererCommand.cpp"
@@ -37,6 +37,7 @@ add_library(KyBao
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Camera/OrthographicCamera.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Camera/OrthographicCameraController.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Scene/Scene.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Scene/Entity.cpp"
         "${IMGUI_SOURCE}"
 )
 target_compile_definitions(KyBao
@@ -86,15 +87,18 @@ PUBLIC  "${CMAKE_CURRENT_LIST_DIR}/KyBao.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Shader.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Buffer.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Renderer.h"
+        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Renderer2D.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/RendererAPI.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/VertexArray.h" 
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/RendererCommand.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Framebuffer.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Texture.h" 
-        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Render/Render2D.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Camera/OrthographicCamera.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Camera/OrthographicCameraController.h"
+        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Camera/Camera.h"
         "${CMAKE_CURRENT_LIST_DIR}/KyBao/Scene/Scene.h"
+        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Scene/Entity.h"
+        "${CMAKE_CURRENT_LIST_DIR}/KyBao/Scene/Components.h"
 )
 
 target_include_directories(KyBao

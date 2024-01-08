@@ -21,8 +21,8 @@ namespace KyBao {
 			s_RendererAPI->Clear();
 		};
 
-		inline static void DrawIndex(const std::shared_ptr<VertexArray>& vertexArray) {
-			s_RendererAPI->DrawIndex(vertexArray);
+		inline static void DrawIndex(const std::shared_ptr<VertexArray>& vertexArray,uint32_t count = 0) {
+			s_RendererAPI->DrawIndex(vertexArray,count);
 		};
 	private:
 		static RendererAPI* s_RendererAPI;

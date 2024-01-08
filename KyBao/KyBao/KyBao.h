@@ -14,8 +14,14 @@
 #include "KyBao/Camera/OrthographicCameraController.h"
 
 #include "KyBao/ImGui/ImGuiLayer.h"
+
+
+#include "KyBao/Scene/Scene.h"
+#include "KyBao/Scene/Entity.h"
+#include "KyBao/Scene/Components.h"
 //-------Renderer----------------------
 #include "KyBao/Render/Renderer.h"
+#include "KyBao/Render/Renderer2D.h"
 #include "KyBao/Render/RendererCommand.h"
 
 #include "KyBao/Render/Buffer.h"
